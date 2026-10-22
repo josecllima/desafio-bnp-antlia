@@ -23,13 +23,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Teste da camada web: sobe so o controller + handler de erros (sem banco).
- * O service e um mock. Verifica status HTTP, validacao e formato do JSON.
- */
 @WebMvcTest(MovimentoManualController.class)
 class MovimentoManualControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -60,7 +55,7 @@ class MovimentoManualControllerTest {
                 .andExpect(jsonPath("$.campos[0].campo").value("mes"))
                 .andExpect(jsonPath("$.campos[0].mensagem").value("Mes deve estar entre 1 e 12"));
 
-        verifyNoInteractions(movimentoService); // nem chegou no service
+        verifyNoInteractions(movimentoService);
     }
 
     @Test

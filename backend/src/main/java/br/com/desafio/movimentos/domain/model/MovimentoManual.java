@@ -15,16 +15,11 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Tabela MOVIMENTO_MANUAL. Um PRODUTO_COSIF possui N movimentos (1:N).
- * Nenhum campo aceita nulo.
- */
 @Entity
 @Table(name = "MOVIMENTO_MANUAL")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MovimentoManual {
-
     @EmbeddedId
     private MovimentoManualId id;
 
@@ -40,10 +35,6 @@ public class MovimentoManual {
     @Column(name = "VAL_VALOR", precision = 18, scale = 2, nullable = false)
     private BigDecimal valor;
 
-    /**
-     * FK composta para PRODUTO_COSIF. As colunas ja sao gravadas pela chave (id),
-     * entao o relacionamento e somente leitura. Usado para exibir DES_PRODUTO no grid.
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "COD_PRODUTO", referencedColumnName = "COD_PRODUTO",

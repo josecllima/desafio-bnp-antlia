@@ -5,8 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-/** Repositorio Spring Data (detalhe de infraestrutura, visivel so neste pacote). */
 interface SpringDataProdutoRepository extends JpaRepository<Produto, String> {
-
     List<Produto> findAllByOrderByDescricaoAsc();
 }

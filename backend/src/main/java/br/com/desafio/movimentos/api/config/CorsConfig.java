@@ -5,14 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/**
- * Libera o front Angular (ng serve roda em http://localhost:4200)
- * para chamar a API em http://localhost:8080.
- * Sem isso o navegador bloqueia as chamadas (politica de mesma origem).
- */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
-
     @Value("${app.cors.allowed-origins:http://localhost:4200}")
     private String[] origensPermitidas;
 

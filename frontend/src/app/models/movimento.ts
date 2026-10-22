@@ -1,4 +1,3 @@
-/** Linha do grid (GET /api/movimentos). */
 export interface Movimento {
   mes: number;
   ano: number;
@@ -12,10 +11,6 @@ export interface Movimento {
   codUsuario: string;
 }
 
-/**
- * Corpo do POST /api/movimentos.
- * NUM_LANCAMENTO, DAT_MOVIMENTO e COD_USUARIO sao gerados no back.
- */
 export interface NovoMovimento {
   mes: number;
   ano: number;

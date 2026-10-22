@@ -6,9 +6,6 @@ import br.com.desafio.movimentos.domain.model.MovimentoManualId;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Uma linha do grid. Inclui a descricao do produto (DES_PRODUTO).
- */
 public record MovimentoResponse(
         Integer mes,
         Integer ano,
@@ -21,8 +18,6 @@ public record MovimentoResponse(
         LocalDateTime dataMovimento,
         String codUsuario
 ) {
-
-    /** Converte a entidade em DTO. A descricao do produto vem separada (ver MovimentoManualService). */
     public static MovimentoResponse de(MovimentoManual movimento, String descricaoProduto) {
         MovimentoManualId id = movimento.getId();
         return new MovimentoResponse(

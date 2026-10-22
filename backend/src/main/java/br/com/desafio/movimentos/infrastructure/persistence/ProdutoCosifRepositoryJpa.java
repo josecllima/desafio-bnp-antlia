@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class ProdutoCosifRepositoryJpa implements ProdutoCosifRepository {
-
     private final SpringDataProdutoCosifRepository jpa;
 
     @Override

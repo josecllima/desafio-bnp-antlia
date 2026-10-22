@@ -23,9 +23,8 @@ describe('MovimentosManuais', () => {
     fixture = TestBed.createComponent(MovimentosManuais);
     http = TestBed.inject(HttpTestingController);
     tela = fixture.nativeElement as HTMLElement;
-    fixture.detectChanges(); // dispara o ngOnInit
+    fixture.detectChanges();
 
-    // Ao abrir, a tela consulta produtos e movimentos automaticamente
     http.expectOne(`${API}/produtos`).flush([{ codProduto: '0001', descricao: 'CDB Pos-Fixado' }]);
     http.expectOne(`${API}/movimentos`).flush([
       {

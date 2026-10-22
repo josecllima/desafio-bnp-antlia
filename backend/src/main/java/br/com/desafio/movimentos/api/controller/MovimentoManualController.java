@@ -18,16 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * Endpoints da tela de Movimentos Manuais.
- * O controller so traduz HTTP <-> DTO; as regras ficam no service.
- */
 @RestController
 @RequestMapping("/api/movimentos")
 @RequiredArgsConstructor
 @Tag(name = "Movimentos Manuais", description = "Consulta e inclusao de movimentos")
 public class MovimentoManualController {
-
     private final MovimentoManualService movimentoService;
 
     @GetMapping

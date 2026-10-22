@@ -19,15 +19,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Testa o mapeamento JPA (chaves compostas e FKs) contra o H2 real,
- * usando o schema.sql e o data.sql do projeto.
- */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({ProdutoRepositoryJpa.class, ProdutoCosifRepositoryJpa.class, MovimentoManualRepositoryJpa.class})
 class RepositoriosJpaTest {
-
     @Autowired
     private ProdutoRepository produtoRepository;
 
@@ -70,19 +65,14 @@ class RepositoriosJpaTest {
         movimentoRepository.salvar(novoMovimento(10, 2026, 2L, "0003", "16120000004"));
         movimentoRepository.salvar(novoMovimento(11, 2026, 1L, "0002", "41520000003"));
 
-        // Grava no banco e limpa o cache de 1o nivel (persistence context).
-        // Sem isso, o listar() devolveria os mesmos objetos criados acima,
-        // que estao em memoria com produtoCosif = null. Simula requisicoes separadas.
+        // forca o listar() a ler do banco, como numa requisicao nova
         entityManager.flush();
         entityManager.clear();
 
-        // maior lancamento de 10/2026, independente do produto
         assertThat(movimentoRepository.obterUltimoNumeroLancamento(10, 2026)).isEqualTo(2L);
 
-        // filtro por mes/ano
         assertThat(movimentoRepository.listar(10, 2026)).hasSize(2);
 
-        // sem filtro: todos, com o produto carregado pelo JOIN FETCH
         List<MovimentoManual> todos = movimentoRepository.listar(null, null);
         assertThat(todos).hasSize(3);
         assertThat(todos.get(0).getProdutoCosif().getProduto().getDescricao()).isEqualTo("LCI");

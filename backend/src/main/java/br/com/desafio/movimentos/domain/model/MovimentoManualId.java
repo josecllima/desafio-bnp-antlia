@@ -10,17 +10,12 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-/**
- * Chave primaria composta de MOVIMENTO_MANUAL:
- * (DAT_MES, DAT_ANO, NUM_LANCAMENTO, COD_PRODUTO, COD_COSIF).
- */
 @Embeddable
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class MovimentoManualId implements Serializable {
-
     @Column(name = "DAT_MES", precision = 2)
     private Integer mes;
 

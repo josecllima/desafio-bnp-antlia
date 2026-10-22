@@ -18,15 +18,9 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-/**
- * Casos de uso da tela de Movimentos Manuais: incluir e listar.
- * Depende apenas das interfaces do dominio (nao conhece JPA).
- */
 @Service
 @RequiredArgsConstructor
 public class MovimentoManualService {
-
-    /** COD_USUARIO fixo, conforme o enunciado. */
     static final String USUARIO_PADRAO = "TESTE";
 
     private final MovimentoManualRepository movimentoRepository;
@@ -34,15 +28,6 @@ public class MovimentoManualService {
     private final ProdutoCosifRepository produtoCosifRepository;
     private final Clock clock;
 
-    /**
-     * Inclui um movimento manual.
-     * Regras:
-     *  - o produto deve existir e o Cosif deve pertencer a ele;
-     *  - NUM_LANCAMENTO = maior lancamento do mesmo mes/ano + 1 (sem considerar o produto);
-     *  - DAT_MOVIMENTO = data/hora da gravacao;
-     *  - COD_USUARIO = "TESTE".
-     * Tudo numa unica transacao (consulta do MAX + INSERT).
-     */
     @Transactional
     public MovimentoResponse incluir(MovimentoRequest request) {
         Produto produto = produtoRepository.buscarPorCodigo(request.codProduto())
@@ -54,6 +39,7 @@ public class MovimentoManualService {
                     "Cosif " + request.codCosif() + " nao pertence ao produto " + request.codProduto());
         }
 
+        // sequencia por mes/ano, independente do produto
         long proximoLancamento =
                 movimentoRepository.obterUltimoNumeroLancamento(request.mes(), request.ano()) + 1;
 
@@ -67,19 +53,14 @@ public class MovimentoManualService {
                 request.descricao().trim(),
                 request.valor(),
                 USUARIO_PADRAO,
-                // smalldatetime nao guarda fracao de segundo
-                LocalDateTime.now(clock).truncatedTo(ChronoUnit.SECONDS));
+                LocalDateTime.now(clock).truncatedTo(ChronoUnit.SECONDS)); // smalldatetime
 
         MovimentoManual salvo = movimentoRepository.salvar(movimento);
 
-        // A descricao vem do produto ja carregado: o objeto salvo tem produtoCosif = null
-        // (relacionamento somente leitura; ver comentario no RepositoriosJpaTest).
+        // produtoCosif nao e carregado no persist; usa o produto ja buscado
         return MovimentoResponse.de(salvo, produto.getDescricao());
     }
 
-    /**
-     * Movimentos para o grid. Mes e ano sao filtros opcionais (null = todos).
-     */
     @Transactional(readOnly = true)
     public List<MovimentoResponse> listar(Integer mes, Integer ano) {
         return movimentoRepository.listar(mes, ano).stream()

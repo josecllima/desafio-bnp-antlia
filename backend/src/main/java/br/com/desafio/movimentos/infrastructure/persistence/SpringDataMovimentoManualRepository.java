@@ -9,8 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 interface SpringDataMovimentoManualRepository extends JpaRepository<MovimentoManual, MovimentoManualId> {
-
-    /** Maior lancamento do mes/ano, independente do produto. COALESCE devolve 0 se nao houver. */
     @Query("""
             SELECT COALESCE(MAX(m.id.numeroLancamento), 0L)
               FROM MovimentoManual m
@@ -19,10 +17,6 @@ interface SpringDataMovimentoManualRepository extends JpaRepository<MovimentoMan
             """)
     Long obterUltimoNumeroLancamento(@Param("mes") Integer mes, @Param("ano") Integer ano);
 
-    /**
-     * Grid: traz o movimento ja com PRODUTO_COSIF e PRODUTO (JOIN FETCH evita N+1).
-     * Filtros opcionais: quando mes/ano forem null, a condicao e ignorada.
-     */
     @Query("""
             SELECT m
               FROM MovimentoManual m

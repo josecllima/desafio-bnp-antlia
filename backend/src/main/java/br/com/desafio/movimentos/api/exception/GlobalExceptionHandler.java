@@ -14,15 +14,9 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.util.List;
 
-/**
- * Converte excecoes em respostas HTTP padronizadas (ErroResponse).
- * Equivale a um middleware de excecao / IExceptionFilter no ASP.NET.
- */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    /** Falha nas anotacoes do MovimentoRequest (@NotNull, @Size, @Min...). */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErroResponse tratarValidacao(MethodArgumentNotValidException ex) {
@@ -32,31 +26,25 @@ public class GlobalExceptionHandler {
         return ErroResponse.de(400, "Dados invalidos", "Um ou mais campos estao invalidos", campos);
     }
 
-    /** Regra de negocio violada no service (ex.: Cosif de outro produto). */
     @ExceptionHandler(RegraNegocioException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErroResponse tratarRegraNegocio(RegraNegocioException ex) {
         return ErroResponse.de(400, "Regra de negocio", ex.getMessage());
     }
 
-    /** JSON mal formado ou tipo errado no corpo (ex.: "mes": "abc"). */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErroResponse tratarJsonInvalido(HttpMessageNotReadableException ex) {
         return ErroResponse.de(400, "Requisicao invalida", "Corpo da requisicao invalido ou mal formado");
     }
 
-    /** Tipo errado em parametro de URL (ex.: ?mes=abc). */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErroResponse tratarParametroInvalido(MethodArgumentTypeMismatchException ex) {
         return ErroResponse.de(400, "Requisicao invalida", "Parametro '" + ex.getName() + "' invalido");
     }
 
-    /**
-     * Violacao de PK/FK no banco. Cenario tipico: dois usuarios incluindo no mesmo
-     * mes/ano ao mesmo tempo e gerando o mesmo NUM_LANCAMENTO. Basta tentar de novo.
-     */
+    // PK duplicada: duas inclusoes simultaneas no mesmo mes/ano
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErroResponse tratarConflito(DataIntegrityViolationException ex) {
@@ -65,14 +53,9 @@ public class GlobalExceptionHandler {
                 "Nao foi possivel gravar o lancamento (possivel inclusao simultanea). Tente novamente.");
     }
 
-    /**
-     * Qualquer outro erro.
-     * Excecoes do proprio Spring MVC (404 rota inexistente, 405 metodo nao suportado...)
-     * ja carregam o status correto: mantem esse status.
-     * O resto vira 500, sem expor detalhes internos ao cliente.
-     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErroResponse> tratarErroInesperado(Exception ex) {
+        // excecoes do Spring MVC (404, 405...) ja trazem o status correto
         if (ex instanceof org.springframework.web.ErrorResponse erroSpring) {
             int status = erroSpring.getStatusCode().value();
             return ResponseEntity.status(status)

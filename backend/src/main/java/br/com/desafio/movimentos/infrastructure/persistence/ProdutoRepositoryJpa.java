@@ -8,11 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/** Implementacao JPA do contrato de dominio ProdutoRepository. */
 @Repository
 @RequiredArgsConstructor
 public class ProdutoRepositoryJpa implements ProdutoRepository {
-
     private final SpringDataProdutoRepository jpa;
 
     @Override

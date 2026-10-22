@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class MovimentoManualRepositoryJpa implements MovimentoManualRepository {
-
     private final SpringDataMovimentoManualRepository jpa;
     private final EntityManager entityManager;
 
@@ -20,12 +19,8 @@ public class MovimentoManualRepositoryJpa implements MovimentoManualRepository {
         return jpa.obterUltimoNumeroLancamento(mes, ano);
     }
 
-    /**
-     * Usa persist (sempre INSERT) em vez de jpa.save().
-     * Como a chave e informada pela aplicacao, o save() faria merge: um SELECT antes
-     * e, se a chave ja existisse, um UPDATE sobrescrevendo o lancamento de outro usuario.
-     * Com persist, chave repetida gera erro de PK (tratado como HTTP 409).
-     */
+    // persist em vez de save(): como a chave vem preenchida, o save() faria merge
+    // e poderia sobrescrever um lancamento existente em vez de falhar por PK.
     @Override
     public MovimentoManual salvar(MovimentoManual movimento) {
         entityManager.persist(movimento);

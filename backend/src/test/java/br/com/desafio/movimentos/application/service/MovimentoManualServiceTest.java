@@ -29,13 +29,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * Teste unitario do service: sem Spring e sem banco.
- * Os repositorios sao mocks (possivel porque o service depende de interfaces).
- */
 @ExtendWith(MockitoExtension.class)
 class MovimentoManualServiceTest {
-
     private static final ZoneId ZONA = ZoneId.of("America/Sao_Paulo");
     private static final Clock RELOGIO_FIXO =
             Clock.fixed(Instant.parse("2026-10-21T13:45:30.789Z"), ZONA);
@@ -69,10 +64,10 @@ class MovimentoManualServiceTest {
         verify(movimentoRepository).salvar(captor.capture());
         MovimentoManual gravado = captor.getValue();
 
-        assertThat(gravado.getId().getNumeroLancamento()).isEqualTo(8L);   // 7 + 1
+        assertThat(gravado.getId().getNumeroLancamento()).isEqualTo(8L);
         assertThat(gravado.getCodUsuario()).isEqualTo("TESTE");
         assertThat(gravado.getDataMovimento())
-                .isEqualTo(LocalDateTime.of(2026, 10, 21, 10, 45, 30));  // sem fracao de segundo
+                .isEqualTo(LocalDateTime.of(2026, 10, 21, 10, 45, 30));
         assertThat(gravado.getDescricao()).isEqualTo("Ajuste manual");      // trim aplicado
 
         assertThat(resposta.descricaoProduto()).isEqualTo("CDB Pos-Fixado");

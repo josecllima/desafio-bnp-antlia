@@ -10,12 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/** Alimenta os combos da tela (Produto e Cosif em cascata). */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProdutoService {
-
     private final ProdutoRepository produtoRepository;
     private final ProdutoCosifRepository produtoCosifRepository;
 
@@ -25,7 +23,6 @@ public class ProdutoService {
                 .toList();
     }
 
-    /** Combo em cascata: so os Cosifs do produto escolhido. */
     public List<CosifResponse> listarCosifs(String codProduto) {
         return produtoCosifRepository.listarPorProduto(codProduto).stream()
                 .map(CosifResponse::de)

@@ -10,11 +10,6 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
-/**
- * Dados digitados na tela para incluir um movimento manual.
- * NUM_LANCAMENTO, DAT_MOVIMENTO e COD_USUARIO NAO vem da tela: sao gerados no back.
- * As anotacoes sao validadas pelo @Valid no controller (passo 5).
- */
 public record MovimentoRequest(
 
         @NotNull(message = "Mes e obrigatorio")

@@ -5,13 +5,11 @@ import { Observable } from 'rxjs';
 import { Movimento, NovoMovimento } from '../../models/movimento';
 import { API_URL } from '../api.config';
 
-/** Acesso aos endpoints de Movimentos Manuais. */
 @Injectable({ providedIn: 'root' })
 export class MovimentoService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = inject(API_URL);
 
-  /** Lista os movimentos do grid. Mes e ano sao filtros opcionais. */
   listar(mes?: number, ano?: number): Observable<Movimento[]> {
     let params = new HttpParams();
     if (mes != null) {

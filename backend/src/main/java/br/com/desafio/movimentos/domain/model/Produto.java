@@ -9,16 +9,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * Tabela PRODUTO.
- */
 @Entity
 @Table(name = "PRODUTO")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // exigido pelo JPA
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Produto {
-
     @Id
     @Column(name = "COD_PRODUTO", length = 4)
     private String codProduto;

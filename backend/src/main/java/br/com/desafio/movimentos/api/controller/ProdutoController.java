@@ -13,13 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/** Endpoints que alimentam os combos da tela. */
 @RestController
 @RequestMapping("/api/produtos")
 @RequiredArgsConstructor
 @Tag(name = "Produtos", description = "Combos de Produto e Cosif")
 public class ProdutoController {
-
     private final ProdutoService produtoService;
 
     @GetMapping

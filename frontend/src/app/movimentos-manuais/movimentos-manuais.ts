@@ -14,14 +14,6 @@ import { Produto } from '../models/produto';
 
 type NomeCampo = 'mes' | 'ano' | 'codProduto' | 'codCosif' | 'valor' | 'descricao';
 
-/**
- * Tela de Movimentos Manuais.
- * Regras do enunciado:
- *  - grid sempre carregado da API (ao abrir e apos cada inclusao);
- *  - campos desabilitados ate clicar em "Novo";
- *  - combo Cosif filtrado pelo Produto escolhido (cascata);
- *  - apos incluir: grid atualizado e campos desabilitados.
- */
 @Component({
   selector: 'app-movimentos-manuais',
   imports: [ReactiveFormsModule, DecimalPipe],
@@ -35,7 +27,6 @@ export class MovimentosManuais implements OnInit {
 
   protected readonly tamanhoMaxDescricao = 50;
 
-  // ---------- estado da tela (signals) ----------
   protected readonly produtos = signal<Produto[]>([]);
   protected readonly cosifs = signal<Cosif[]>([]);
   protected readonly movimentos = signal<Movimento[]>([]);
@@ -46,7 +37,6 @@ export class MovimentosManuais implements OnInit {
   protected readonly mensagemErro = signal<string | null>(null);
   protected readonly camposComErro = signal<CampoInvalido[]>([]);
 
-  // ---------- formulario ----------
   protected readonly form = this.fb.group({
     mes: this.fb.control<number | null>(null, [
       Validators.required,
@@ -68,11 +58,9 @@ export class MovimentosManuais implements OnInit {
   });
 
   constructor() {
-    // Campos comecam desabilitados (so o botao "Novo" habilita)
     this.form.disable();
 
-    // Combo em cascata: ao trocar o produto, limpa o Cosif e recarrega a lista.
-    // switchMap cancela a requisicao anterior se o usuario trocar rapido de produto.
+    // cascata Produto -> Cosif; o switchMap descarta a resposta de um produto anterior
     this.form.controls.codProduto.valueChanges
       .pipe(
         tap(() => {
@@ -99,9 +87,6 @@ export class MovimentosManuais implements OnInit {
     this.carregarMovimentos();
   }
 
-  // ---------- botoes ----------
-
-  /** "Novo": habilita os campos para digitar um novo lancamento. */
   protected novo(): void {
     this.limparMensagens();
     this.form.enable();
@@ -109,13 +94,11 @@ export class MovimentosManuais implements OnInit {
     this.editando.set(true);
   }
 
-  /** "Limpar": apaga o que foi digitado (mantem habilitado/desabilitado como esta). */
   protected limpar(): void {
     this.limparMensagens();
     this.form.reset();
   }
 
-  /** "Incluir": valida, grava na API, atualiza o grid e desabilita os campos. */
   protected incluir(): void {
     if (!this.editando() || this.salvando()) {
       return;
@@ -156,15 +139,11 @@ export class MovimentosManuais implements OnInit {
       });
   }
 
-  // ---------- apoio ao template ----------
-
-  /** True quando o campo esta invalido e o usuario ja interagiu com ele. */
   protected invalido(campo: NomeCampo): boolean {
     const controle = this.form.controls[campo];
     return controle.invalid && (controle.touched || controle.dirty);
   }
 
-  /** Formata com zeros a esquerda, como no prototipo (02, 001). */
   protected zeros(valor: number, tamanho: number): string {
     return String(valor).padStart(tamanho, '0');
   }
@@ -173,8 +152,6 @@ export class MovimentosManuais implements OnInit {
     return this.form.controls.descricao.value?.length ?? 0;
   }
 
-  // ---------- carga de dados ----------
-
   private carregarProdutos(): void {
     this.produtoService.listarProdutos().subscribe({
       next: (lista) => this.produtos.set(lista),
@@ -182,7 +159,6 @@ export class MovimentosManuais implements OnInit {
     });
   }
 
-  /** O grid sempre reflete o banco: consulta a API ao abrir e apos cada inclusao. */
   private carregarMovimentos(): void {
     this.carregandoGrid.set(true);
     this.movimentoService
@@ -193,8 +169,6 @@ export class MovimentosManuais implements OnInit {
         error: (erro: HttpErrorResponse) => this.tratarErro(erro),
       });
   }
-
-  // ---------- erros ----------
 
   private limparMensagens(): void {
     this.mensagemSucesso.set(null);
