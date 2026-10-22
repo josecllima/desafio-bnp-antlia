@@ -1,0 +1,132 @@
+<section class="card">
+  <h1>Movimentos Manuais</h1>
+
+  @if (mensagemSucesso()) {
+    <div class="alerta alerta-sucesso" role="status">{{ mensagemSucesso() }}</div>
+  }
+  @if (mensagemErro()) {
+    <div class="alerta alerta-erro" role="alert">
+      {{ mensagemErro() }}
+      @if (camposComErro().length) {
+        <ul>
+          @for (campo of camposComErro(); track campo.campo) {
+            <li>{{ campo.mensagem }}</li>
+          }
+        </ul>
+      }
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="incluir()" novalidate>
+    <div class="grade">
+      <div class="campo">
+        <label for="mes">Mês:</label>
+        <input id="mes" type="number" formControlName="mes" min="1" max="12" placeholder="1 a 12" />
+        @if (invalido('mes')) {
+          <small class="erro">Informe um mês entre 1 e 12.</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="ano">Ano:</label>
+        <input id="ano" type="number" formControlName="ano" placeholder="AAAA" />
+        @if (invalido('ano')) {
+          <small class="erro">Informe o ano com 4 dígitos.</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="produto">Produto:</label>
+        <select id="produto" formControlName="codProduto">
+          <option [ngValue]="null">-- Selecione --</option>
+          @for (produto of produtos(); track produto.codProduto) {
+            <option [ngValue]="produto.codProduto">{{ produto.descricao }}</option>
+          }
+        </select>
+        @if (invalido('codProduto')) {
+          <small class="erro">Selecione o produto.</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="cosif">Cosif:</label>
+        <select id="cosif" formControlName="codCosif">
+          <option [ngValue]="null">-- Selecione --</option>
+          @for (cosif of cosifs(); track cosif.codCosif) {
+            <option [ngValue]="cosif.codCosif">{{ cosif.exibicao }}</option>
+          }
+        </select>
+        @if (invalido('codCosif')) {
+          <small class="erro">Selecione o Cosif.</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="valor">Valor:</label>
+        <input id="valor" type="number" formControlName="valor" step="0.01" min="0.01" />
+        @if (invalido('valor')) {
+          <small class="erro">Informe um valor maior que zero.</small>
+        }
+      </div>
+
+      <div class="campo campo-inteiro">
+        <label for="descricao">Descrição:</label>
+        <textarea
+          id="descricao"
+          formControlName="descricao"
+          rows="2"
+          [attr.maxlength]="tamanhoMaxDescricao"
+        ></textarea>
+        <div class="rodape-campo">
+          @if (invalido('descricao')) {
+            <small class="erro">Informe a descrição (máximo {{ tamanhoMaxDescricao }}).</small>
+          }
+          <small class="contador">{{ tamanhoDescricao() }}/{{ tamanhoMaxDescricao }}</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="botoes">
+      <button type="button" (click)="limpar()">Limpar</button>
+      <button type="button" (click)="novo()" [disabled]="salvando()">Novo</button>
+      <button type="submit" [disabled]="!editando() || salvando()">
+        {{ salvando() ? 'Incluindo...' : 'Incluir' }}
+      </button>
+    </div>
+  </form>
+</section>
+
+<section class="card">
+  <table class="grid">
+    <thead>
+      <tr>
+        <th>Mês</th>
+        <th>Ano</th>
+        <th>Código do Produto</th>
+        <th>Descrição do Produto</th>
+        <th>NR Lançamento</th>
+        <th>Descrição</th>
+        <th class="numero">Valor</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (m of movimentos(); track m.ano + '-' + m.mes + '-' + m.numeroLancamento + '-' + m.codProduto + '-' + m.codCosif) {
+        <tr>
+          <td>{{ zeros(m.mes, 2) }}</td>
+          <td>{{ m.ano }}</td>
+          <td>{{ m.codProduto }}</td>
+          <td>{{ m.descricaoProduto }}</td>
+          <td>{{ zeros(m.numeroLancamento, 3) }}</td>
+          <td>{{ m.descricao }}</td>
+          <td class="numero">{{ m.valor | number: '1.2-2' }}</td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="7" class="vazio">
+            {{ carregandoGrid() ? 'Carregando...' : 'Nenhum movimento cadastrado.' }}
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>
